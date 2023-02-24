@@ -7,6 +7,7 @@ using System.Numerics;
 
 namespace Spasteroids.UI
 {
+	public delegate void OnClickEvent();
 	public class Button : GameObject
 	{
 		public struct RenderSettings
@@ -29,6 +30,8 @@ namespace Spasteroids.UI
 		
 		private Vector2 textSize;
 		private RenderSettings renderSettings;
+
+		private OnClickEvent? onClick;
 		public Button(Vector2 _position, Vector2 _size, string _text, RenderSettings _settings)
 		{
 			position = _position;
@@ -43,6 +46,28 @@ namespace Spasteroids.UI
 			textSize.Y = 0;
 		}
 
+		public void AddListener(OnClickEvent? _event)
+		{
+			if(onClick == _event)
+			{
+				onClick = _event;
+			}
+			else
+			{
+				{
+					onClick += _event;
+				}
+			}
+		}
+
+		public void RemoveListener(OnClickEvent? _event)
+		{
+			if(_event != null && onClick != null)
+			{
+				onClick -= _event;
+			}
+		}
+
 		public override void Draw()
 		{
 			Raylib.DrawRectanglePro(new Rectangle(position.X, position.Y, size.X, size.Y), size * 0.5f, 0f, color);
@@ -52,6 +77,10 @@ namespace Spasteroids.UI
 
 		public override void Update(float _deltaTime)
 		{
+			if(Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), GetBounds()) && Raylib.IsMouseButtonReleased(MouseButton.MOUSE_BUTTON_LEFT))
+			{
+				onClick?.Invoke();
+			}
 			color = renderSettings.tint.normal;
 			if(Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), GetBounds()))
 			{

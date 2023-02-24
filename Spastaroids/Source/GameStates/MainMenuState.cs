@@ -25,16 +25,21 @@ namespace Spasteroids.UI
 			Vector2 size = new Vector2(screenWidth * 0.5f, 100);
 			Vector2 pos = new Vector2(size.X , screenHeight *0.5f - size.X * 0.5f);
 			ColorBlock buttonColors = new ColorBlock(Color.RAYWHITE, Color.LIGHTGRAY,Color.DARKGRAY, Color.BLACK);
-			Button.RenderSettings renderSetting = new Button.RenderSettings(buttonColors, 100, "Fonts/Halo");
-			
+			Button.RenderSettings renderSetting = new Button.RenderSettings(buttonColors, 75, "Fonts/Halo");
 			
 			playButton = new Button(pos, size, "Play", renderSetting);
+			playButton.AddListener(() =>
+			{
+				GameStateManager.DeactivateState(ID);
+				GameStateManager.ActivateStates("Play");
+			});
 			GameObjectManager.Spawn(playButton);
 		}
 
 		public void Unload()
 		{
-			
+			GameObjectManager.Destroy(playButton);
+			playButton = null;
 		}
 
 		public void Update(float _deltaTime)
@@ -46,6 +51,8 @@ namespace Spasteroids.UI
 		{
 			
 		}
+		
+		
 
 	}
 }
